@@ -1,129 +1,92 @@
 //
-//  PokemonInfoPage.swift
+//  PokemonInfoView.swift
 //  Serebii
 //
-//  Created by Patrick Solis on 10/26/21.
+//  Created by Patrick Solis on 10/28/21.
 //
 
 import UIKit
 
 class PokemonInfoView: UIView {
-    
-    var imageView: UIImageView
-    var collectionView: UICollectionView
-    
-    // MARK: - Initializers
+
     override init(frame: CGRect) {
-        self.imageView = UIImageView(frame: .zero)
-        self.collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         super.init(frame: frame)
-        self.setupViews()
+        self.setup()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Methods
-    
-    func setupViews() {
-        self.backgroundColor = .backgroundColor
-
-        // MARK: - Image
-        self.imageView.translatesAutoresizingMaskIntoConstraints = false
-        self.imageView.backgroundColor = .detailBackgroudColor
-        self.imageView.image = UIImage(named: "bulbasaurImage")
-        self.imageView.contentMode = .scaleAspectFit
+    private func setup() {
+        // AddScroll View
+        let scrollView = UIScrollView(frame: .zero)
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.backgroundColor = .backgroundColor
+        self.addSubview(scrollView)
         
-        self.imageView.layer.cornerRadius = 30
-        self.imageView.layer.borderColor = UIColor.darkGray.cgColor
-        self.imageView.layer.borderWidth = 0.5
+        // Set Scroll View Constraints
+        scrollView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        scrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        scrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        scrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
         
-        self.addSubview(self.imageView)
+        // Add Content View
+        let contentView = UIView(frame: .zero)
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(contentView)
         
-        // MARK: - Info View
-        self.collectionView.translatesAutoresizingMaskIntoConstraints = false
-        self.collectionView.backgroundColor = .clear
-        self.addSubview(self.collectionView)
+        // Set Content View Constraints
+        contentView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+        contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
+        contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
+        contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
+        contentView.heightAnchor.constraint(equalTo: heightAnchor).isActive = true
+        contentView.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
         
-//        let infoView: UIView = UIView(frame: .zero)
-//        infoView.translatesAutoresizingMaskIntoConstraints = false
-//        infoView.layer.cornerRadius = 30
-//        self.addSubview(infoView)
-//
-//        let infoStackView = UIStackView(frame: infoView.frame)
-//        infoStackView.translatesAutoresizingMaskIntoConstraints = false
-//        infoStackView.axis = .vertical
-//        infoStackView.distribution = .fillEqually
-//        infoStackView.spacing = 10
-//
-//
-//        // MARK: First Detail Row
-//        let firstRowStackView = UIStackView(frame: .zero)
-//        firstRowStackView.translatesAutoresizingMaskIntoConstraints = false
-//        firstRowStackView.axis = .horizontal
-//        firstRowStackView.distribution = .fillEqually
-//        firstRowStackView.spacing = 10
-//
-//        // MARK: - Type Detail Cell
-//
-//        let typeView = DetailCellView(frame: .zero)
-//        typeView.setTitle("Type")
-//
-        let typeStackView = UIStackView(frame: .zero)
-        typeStackView.axis = .horizontal
-        typeStackView.distribution = .fillEqually
-        typeStackView.spacing = 10
-
-        let primaryType = UIImageView(image: UIImage(named: "grassType"))
-        primaryType.contentMode = .scaleAspectFit
-        primaryType.widthAnchor.constraint(equalToConstant: 80).isActive = true
-
-        let secondaryType = UIImageView(image: UIImage(named: "poisonType"))
-        secondaryType.contentMode = .scaleAspectFit
-        secondaryType.widthAnchor.constraint(equalToConstant: 80).isActive = true
-
-        typeStackView.addArrangedSubview(primaryType)
-        typeStackView.addArrangedSubview(secondaryType)
-//
-//        typeView.setDetailView(typeStackView)
-//
-//        // MARK: - Classification Detail Cell
-//
-//        let classificationView = DetailCellView(frame: .zero)
-//        classificationView.setTitle("Classification")
-//
-//        let classificationLabel = UILabel(frame: .zero)
-//        classificationLabel.text = "Seed Pokemon"
-//        classificationLabel.textColor = .fontColor
-//        classificationView.setDetailView(classificationLabel)
-//
-//        firstRowStackView.addArrangedSubview(typeView)
-//        firstRowStackView.addArrangedSubview(classificationView)
-//        infoStackView.addSubview(firstRowStackView)
-//
-//        // MARK: - Abilities Detail Cell
-//        let abilitiesView = DetailCellView(frame: .zero)
-//        abilitiesView.setTitle("Abilities")
-//
+        // Add Subviews
+        let pokemonImageView = UIImageView(image: UIImage(named: "bulbasaurImage"))
+        let basicInfoView = BasicInfoView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         
-        // MARK: - Set Constraints
+        let weaknessChartView = DetailView(frame: .zero)
+        weaknessChartView.setTitle(InfoTitle.weakness.title)
+        weaknessChartView.setDetailView(WeaknessChartView(frame: weaknessChartView.frame))
         
-        // Image Constraints
-        let imageViewConstraints = [
-            self.imageView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            self.imageView.widthAnchor.constraint(equalTo: self.safeAreaLayoutGuide.widthAnchor, multiplier: 0.4),
-            self.imageView.heightAnchor.constraint(equalTo: self.imageView.widthAnchor),
-            self.imageView.centerYAnchor.constraint(equalTo: self.centerYAnchor)
-        ]
+        contentView.addSubview(pokemonImageView)
+        contentView.addSubview(basicInfoView)
+        contentView.addSubview(weaknessChartView)
         
-        let infoCollectionViewConstraints = [
-            self.collectionView.topAnchor.constraint(equalTo: self.imageView.topAnchor),
-            self.collectionView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor, constant: -20),
-            self.collectionView.leadingAnchor.constraint(equalTo: self.imageView.trailingAnchor, constant: 20),
-            self.collectionView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor, constant: -20)
-        ]
-
-        NSLayoutConstraint.activate(imageViewConstraints + infoCollectionViewConstraints)
+        // Set Image View Properties
+        pokemonImageView.contentMode = .scaleAspectFit
+        pokemonImageView.backgroundColor = .detailBackgroudColor
+        pokemonImageView.layer.cornerRadius = 20.0
+        
+        // Set Image View Constraints
+        pokemonImageView.translatesAutoresizingMaskIntoConstraints = false
+        pokemonImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20).isActive = true
+        pokemonImageView.bottomAnchor.constraint(lessThanOrEqualTo: weaknessChartView.topAnchor, constant: -20).isActive = true
+        pokemonImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
+        pokemonImageView.trailingAnchor.constraint(lessThanOrEqualTo: basicInfoView.leadingAnchor, constant: -10).isActive = true
+        pokemonImageView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.4).isActive = true
+        pokemonImageView.heightAnchor.constraint(equalTo: pokemonImageView.widthAnchor).isActive = true
+        
+        // Set Basic Info View Constraints
+        let basicInfoViewHeight = CGFloat((125 * 4) + (10 * 3))
+        
+        basicInfoView.translatesAutoresizingMaskIntoConstraints = false
+        basicInfoView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20).isActive = true
+        basicInfoView.bottomAnchor.constraint(equalTo: weaknessChartView.topAnchor, constant: -10).isActive = true
+        basicInfoView.leadingAnchor.constraint(equalTo: pokemonImageView.trailingAnchor, constant: 20).isActive = true
+        basicInfoView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
+        basicInfoView.heightAnchor.constraint(equalToConstant: basicInfoViewHeight).isActive = true
+        
+        // Set Weakness Chart View
+        
+        weaknessChartView.translatesAutoresizingMaskIntoConstraints = false
+        weaknessChartView.topAnchor.constraint(equalTo: basicInfoView.bottomAnchor, constant: 10).isActive = true
+        weaknessChartView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20).isActive = true
+        weaknessChartView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
+        weaknessChartView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
+        
     }
 }

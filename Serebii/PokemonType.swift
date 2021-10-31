@@ -7,14 +7,14 @@
 
 import Foundation
 
-enum PokemonType: String {
-    case noraml
+enum PokemonType: String, CaseIterable {
+    case normal
     case fire
     case water
     case electric
     case grass
     case ice
-    case fight
+    case fighting
     case poison
     case ground
     case flying
