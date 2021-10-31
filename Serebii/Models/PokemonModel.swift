@@ -8,23 +8,32 @@
 import Foundation
 
 struct PokemonModel: Decodable {
-    
-    struct Species: Decodable {
-        let name: String
-        let url: String
-    }
-    
     let id: Int
-    let species: Species
-    let types: [Types]
+    let name: String
+    let type: [`Type`]
+    let ability: [Ability]
     let height: Double
     let weight: Double
     
+    init(id: Int, name: String, type: [`Type`], ability: [Ability], height: Double, weight: Double) {
+        self.id = id
+        self.name = name
+        self.type = type
+        self.ability = ability
+        self.height = height
+        self.weight = weight
+    }
+    
     init() {
         self.id = 0
-        self.species = Species(name: "MissingNo", url: "")
-        self.types = [Types(slot: 1, type: .init(name: .normal, url: ""))]
-        self.height = 30.48
-        self.weight = 159.084
+        self.name = "MissingNo"
+        self.type = [.normal]
+        self.ability = [.init(name: "", description: "", isHidden: false)]
+        self.height = 123
+        self.weight = 123
+    }
+    
+    func setAbilities() {
+        
     }
 }

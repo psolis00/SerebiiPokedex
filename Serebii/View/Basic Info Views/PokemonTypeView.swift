@@ -30,14 +30,14 @@ class PokemonTypeView: UIStackView {
         self.spacing = Constants.spacing
     }
     
-    func setTypes(primaryType: Types, secondaryType: Types? = nil) {
+    func setTypes(primaryType: `Type`, secondaryType: `Type`? = nil) {
         // Set primary type
-        let primaryTypeImageView = UIImageView(image: UIImage(named: primaryType.type.name.rawValue))
+        let primaryTypeImageView = UIImageView(image: UIImage(named: primaryType.rawValue))
         primaryTypeImageView.contentMode = .scaleAspectFit
         self.addArrangedSubview(primaryTypeImageView)
         
         if let secondaryType = secondaryType {
-            let secondaryTypeImageView = UIImageView(image: UIImage(named: secondaryType.type.name.rawValue))
+            let secondaryTypeImageView = UIImageView(image: UIImage(named: secondaryType.rawValue))
             secondaryTypeImageView.contentMode = .scaleAspectFit
             self.addArrangedSubview(secondaryTypeImageView)
         }

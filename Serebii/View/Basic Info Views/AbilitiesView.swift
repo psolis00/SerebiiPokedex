@@ -28,11 +28,11 @@ class AbilitiesView: UIStackView {
         self.spacing = Constants.spacing
     }
 
-    func setAbilities(abilities: [(String, String)]) {
-        abilities.forEach { ability, text in
+    func setAbilities(abilities: [Ability]) {
+        abilities.forEach { ability in
             let attributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .black)]
-            let attributedString = NSMutableAttributedString(string: "\(ability): ", attributes: attributes)
-            let normalString = NSMutableAttributedString(string: text)
+            let attributedString = NSMutableAttributedString(string: "\(ability.name)\(ability.isHidden ? " (Hidden)": ""): ", attributes: attributes)
+            let normalString = NSMutableAttributedString(string: ability.description)
             attributedString.append(normalString)
 
             let label = UILabel(frame: .zero)

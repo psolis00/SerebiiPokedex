@@ -58,8 +58,8 @@ extension BasicInfoView: UICollectionViewDataSource {
 
         if infoTitle == .type {
             let detailView = PokemonTypeView(frame: .zero)
-            let primaryType: Types = self.pokemon.types[0]
-            let secondaryType: Types? = self.pokemon.types.count == 2 ? self.pokemon.types[1] : nil
+            let primaryType: `Type` = self.pokemon.type[0]
+            let secondaryType: `Type`? = self.pokemon.type.count == 2 ? self.pokemon.type[1] : nil
             detailView.setTypes(primaryType: primaryType, secondaryType: secondaryType)
             cell.setDetailView(detailView)
         } else if infoTitle == .genderRatio {
@@ -68,7 +68,7 @@ extension BasicInfoView: UICollectionViewDataSource {
             cell.setDetailView(detailView)
         } else if infoTitle == .abilities {
             let detailView = AbilitiesView(frame: frame)
-            detailView.setAbilities(abilities: [("Overgrow", "When HP is below 1/3rd its maximum, power of Grass-type moves is increased by 50%."), ("Chlorophyll (Hidden)", "When sunny, the Pokemon's Speed doubles")])
+            detailView.setAbilities(abilities: self.pokemon.ability)
             cell.setDetailView(detailView)
         } else if infoTitle == .height {
             cell.setDetailView(text: self.pokemon.height.dmToFeetAndInches())
@@ -101,6 +101,10 @@ extension BasicInfoView: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let sectionTitle = self.sectionTitles[indexPath.section][indexPath.row]
+        if sectionTitle == .abilities {
+            
+        }
         let numberOfItems = CGFloat(self.sectionTitles[indexPath.section].count)
         let width = (collectionView.frame.width - (Constants.spacing * (numberOfItems - 1.0))) / numberOfItems
         return CGSize(width: width, height: 125)

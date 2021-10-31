@@ -18,11 +18,11 @@ class PokemonInfoViewController: UIViewController {
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationBar.backgroundColor = .titleBackgroundColor
 
-        NetworkServices.fetchPokemon(pokemonName: "bulbasaur") { pokemon in
-            if let pokemon = pokemon {
+        fetchPokemon(fromPath: "https://pokeapi.co/api/v2/pokemon/bulbasaur") { (pokemon: PokemonResponseModel) in
+            pokemon.pokemonModel { pokemonModel in
                 DispatchQueue.main.async {
-                    self.navigationItem.title = String(format: "#%03d \(pokemon.species.name.capitalized)", pokemon.id )
-                    self.pokemonInfoView.setPokemon(pokemon)
+                    self.navigationItem.title = String(format: "#%03d %@", pokemonModel.id, pokemonModel.name)
+                    self.pokemonInfoView.setPokemon(pokemonModel)
                 }
             }
         }

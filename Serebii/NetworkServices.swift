@@ -6,35 +6,26 @@
 //
 
 import Foundation
-
-struct NetworkServices {
     
-    static func fetchPokemon(pokemonName pokemon: String, completion: @escaping (PokemonModel?) -> () = { _ in }) {
-        let api = "https://pokeapi.co/api/v2/pokemon/"
-        guard let url = URL(string: api + pokemon) else {
-            completion(nil)
-            return
-        }
-
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print(error.localizedDescription)
-                completion(nil)
-            } else {
-                guard let data = data else {
-                    print("Unable to retrieve data")
-                    completion(nil)
-                    return
-                }
-                do {
-                    let pokemon = try JSONDecoder().decode(PokemonModel.self, from: data)
-                    print(pokemon)
-                    completion(pokemon)
-                } catch {
-                    print("Unable to decode Pokemon Data: \(error.localizedDescription)")
-                    completion(nil)
-                }
-            }
-        }.resume()
+public func fetchPokemon<T: Decodable>(fromPath path: String, completion: @escaping (T) -> () = { _ in }) {
+    guard let url = URL(string: path) else {
+        return
     }
+
+    URLSession.shared.dataTask(with: url) { data, response, error in
+        if let error = error {
+            print(error.localizedDescription)
+        } else {
+            guard let data = data else {
+                print("Unable to retrieve data")
+                return
+            }
+            do {
+                let model = try JSONDecoder().decode(T.self, from: data)
+                completion(model)
+            } catch {
+                print("Unable to decode Pokemon Data: \(error.localizedDescription)")
+            }
+        }
+    }.resume()
 }
