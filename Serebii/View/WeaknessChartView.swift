@@ -26,7 +26,7 @@ class WeaknessChartView: UIView {
         weaknessGrid.distribution = .fillEqually
         weaknessGrid.spacing = 5
         
-        PokemonType.allCases.forEach { type in
+        Types.Name.allCases.forEach { type in
             let stackView = UIStackView(frame: .zero)
             stackView.axis = .vertical
             stackView.distribution = .fillEqually

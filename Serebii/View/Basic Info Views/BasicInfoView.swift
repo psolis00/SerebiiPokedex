@@ -9,6 +9,12 @@ import UIKit
 
 class BasicInfoView: UICollectionView {
     
+    var pokemon: PokemonModel = .init() {
+        didSet {
+            self.reloadData()
+        }
+    }
+    
     private struct Constants {
         static let spacing: CGFloat = 10.0
     }
@@ -52,7 +58,9 @@ extension BasicInfoView: UICollectionViewDataSource {
 
         if infoTitle == .type {
             let detailView = PokemonTypeView(frame: .zero)
-            detailView.setTypes(primaryType: .grass, secondaryType: .poison)
+            let primaryType: Types = self.pokemon.types[0]
+            let secondaryType: Types? = self.pokemon.types.count == 2 ? self.pokemon.types[1] : nil
+            detailView.setTypes(primaryType: primaryType, secondaryType: secondaryType)
             cell.setDetailView(detailView)
         } else if infoTitle == .genderRatio {
             let detailView = GenderRatioView(frame: .zero)
@@ -62,8 +70,12 @@ extension BasicInfoView: UICollectionViewDataSource {
             let detailView = AbilitiesView(frame: frame)
             detailView.setAbilities(abilities: [("Overgrow", "When HP is below 1/3rd its maximum, power of Grass-type moves is increased by 50%."), ("Chlorophyll (Hidden)", "When sunny, the Pokemon's Speed doubles")])
             cell.setDetailView(detailView)
+        } else if infoTitle == .height {
+            cell.setDetailView(text: self.pokemon.height.dmToFeetAndInches())
+        } else if infoTitle == .weight {
+            cell.setDetailView(text: self.pokemon.weight.hgToLbs())
         } else {
-            cell.setDetailView(text: "Test")
+            cell.setDetailView(text: "test")
         }
         return cell
     }

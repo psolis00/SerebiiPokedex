@@ -9,7 +9,14 @@ import UIKit
 
 class PokemonInfoView: UIView {
 
+    let pokemonImageView: UIImageView
+    let basicInfoView: BasicInfoView
+    let weaknessChartView: DetailView
+    
     override init(frame: CGRect) {
+        self.pokemonImageView = UIImageView(frame: .zero)
+        self.basicInfoView = BasicInfoView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        self.weaknessChartView = DetailView(frame: .zero)
         super.init(frame: frame)
         self.setup()
     }
@@ -45,18 +52,12 @@ class PokemonInfoView: UIView {
         contentView.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
         
         // Add Subviews
-        let pokemonImageView = UIImageView(image: UIImage(named: "bulbasaurImage"))
-        let basicInfoView = BasicInfoView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        
-        let weaknessChartView = DetailView(frame: .zero)
-        weaknessChartView.setTitle(InfoTitle.weakness.title)
-        weaknessChartView.setDetailView(WeaknessChartView(frame: weaknessChartView.frame))
-        
         contentView.addSubview(pokemonImageView)
         contentView.addSubview(basicInfoView)
         contentView.addSubview(weaknessChartView)
         
         // Set Image View Properties
+        pokemonImageView.image = UIImage(named: "bulbasaurImage")
         pokemonImageView.contentMode = .scaleAspectFit
         pokemonImageView.backgroundColor = .detailBackgroudColor
         pokemonImageView.layer.cornerRadius = 20.0
@@ -81,6 +82,8 @@ class PokemonInfoView: UIView {
         basicInfoView.heightAnchor.constraint(equalToConstant: basicInfoViewHeight).isActive = true
         
         // Set Weakness Chart View
+        weaknessChartView.setTitle(InfoTitle.weakness.title)
+        weaknessChartView.setDetailView(WeaknessChartView(frame: weaknessChartView.frame))
         
         weaknessChartView.translatesAutoresizingMaskIntoConstraints = false
         weaknessChartView.topAnchor.constraint(equalTo: basicInfoView.bottomAnchor, constant: 10).isActive = true
@@ -88,5 +91,9 @@ class PokemonInfoView: UIView {
         weaknessChartView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
         weaknessChartView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
         
+    }
+    
+    func setPokemon(_ pokemon: PokemonModel) {
+        self.basicInfoView.pokemon = pokemon
     }
 }
