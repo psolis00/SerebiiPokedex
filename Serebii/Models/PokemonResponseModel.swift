@@ -10,11 +10,37 @@ import UIKit
 
 struct PokemonResponseModel: Decodable {
     
-    struct Species: Decodable {
-        let name: String
-        let url: String
+    struct SpeciesRepsonse: Decodable {
+        enum CodingKeys: String, CodingKey {
+            case baseHappiness = "base_happiness"
+            case captureRate = "capture_rate"
+            case hatchCounter = "hatch_counter"
+            case growthRate = "growth_rate"
+            case genera
+        }
+        
+        struct GeneraResponse: Decodable {
+            let language: Language
+            let genus: String
+        }
+        
+        struct GrowthRateResponse: Decodable {
+            
+            enum CodingKeys: String, CodingKey {
+                case growth = "name"
+                case url
+            }
+            
+            let growth: GrowthRate
+            let url : String
+        }
+        
+        let baseHappiness: Int
+        let captureRate: Int
+        let hatchCounter: Int
+        let growthRate: GrowthRateResponse
+        let genera: [GeneraResponse]
     }
-    
     
     struct TypeOrderResponse: Decodable {
         
@@ -70,13 +96,41 @@ struct PokemonResponseModel: Decodable {
     func pokemonModel(completion: @escaping (PokemonModel) -> Void){
         var abilityCount = 0
         var pokemonAbilities: [Ability] = []
-        abilities.forEach { abilityResponse in
-            fetchPokemon(fromPath: abilityResponse.ability.url) { (ability: AbilityDescriptionResponse) in
-                abilityCount += 1
-                guard let description = ability.effectEntries.first(where: { $0.language.name == "en" })?.effect else { return }
-                pokemonAbilities.append(Ability(name: abilityResponse.ability.name.capitalized, description: description, isHidden: abilityResponse.isHidden))
-                if abilityCount == self.abilities.count {
-                    completion(PokemonModel(id: self.id, name: self.species.name.capitalized, type: self.types.map({ $0.type.name }), ability: pokemonAbilities, height: self.height, weight: self.weight))
+        var genderRatios: [(Gender, Int)] = []
+        fetchPokemon(fromPath: self.species.url) { (speciesResponse: SpeciesRepsonse) in
+            fetchPokemon(fromPath: "https://pokeapi.co/api/v2/gender/female") { (genderResponse: GenderResponse) in
+                if let rate = genderResponse.species.first(where: { $0.species.name == self.species.name })?.rate {
+                    genderRatios.append((Gender.female, rate))
+                    genderRatios.append((Gender.male, 8 - rate))
+                } else {
+                    genderRatios.append((Gender.genderless, -1))
+                }
+                abilities.forEach { abilityResponse in
+                    fetchPokemon(fromPath: abilityResponse.ability.url) { (ability: AbilityDescriptionResponse) in
+                        abilityCount += 1
+                        guard let description = ability.effectEntries.first(where: { $0.language.name == "en" })?.effect else { return }
+                        pokemonAbilities.append(Ability(name: abilityResponse.ability.name.capitalized, description: description, isHidden: abilityResponse.isHidden))
+                        if abilityCount == self.abilities.count {
+                            
+                            guard let classification = speciesResponse.genera.first(where: { $0.language.name == "en" })?.genus else { return }
+                            completion(
+                                PokemonModel(
+                                    id: self.id,
+                                    name: self.species.name.capitalized,
+                                    type: self.types.map({ $0.type.name }),
+                                    classification: classification,
+                                    genderRatios: genderRatios,
+                                    ability: pokemonAbilities,
+                                    height: self.height,
+                                    weight: self.weight,
+                                    catchRate: speciesResponse.captureRate,
+                                    eggSteps: (255 * speciesResponse.hatchCounter) + speciesResponse.hatchCounter,
+                                    growthRate: speciesResponse.growthRate.growth,
+                                    baseHappiness: speciesResponse.baseHappiness
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -86,10 +140,6 @@ struct PokemonResponseModel: Decodable {
 struct AbilityDescriptionResponse: Decodable {
     
     struct EffectEntry: Decodable {
-    
-        struct Language: Decodable {
-            let name: String
-        }
         
         let effect: String
         let language: Language
@@ -101,4 +151,13 @@ struct AbilityDescriptionResponse: Decodable {
     
     let effectEntries: [EffectEntry]
 
+}
+
+struct Language: Decodable {
+    let name: String
+}
+
+struct Species: Decodable {
+    let name: String
+    let url: String
 }

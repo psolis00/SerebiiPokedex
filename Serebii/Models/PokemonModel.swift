@@ -7,33 +7,32 @@
 
 import Foundation
 
-struct PokemonModel: Decodable {
+struct PokemonModel {
     let id: Int
     let name: String
     let type: [`Type`]
+    let classification: String
+    let genderRatios: [(Gender, Int)]
     let ability: [Ability]
     let height: Double
     let weight: Double
+    let catchRate: Int
+    let baseHappiness: Int
+    let eggSteps: Int
+    let growthRate: GrowthRate
     
-    init(id: Int, name: String, type: [`Type`], ability: [Ability], height: Double, weight: Double) {
+    init(id: Int, name: String, type: [`Type`], classification: String, genderRatios: [(Gender, Int)], ability: [Ability], height: Double, weight: Double, catchRate: Int, eggSteps: Int, growthRate: GrowthRate, baseHappiness: Int) {
         self.id = id
         self.name = name
         self.type = type
+        self.classification = classification
+        self.genderRatios = genderRatios
         self.ability = ability
         self.height = height
         self.weight = weight
-    }
-    
-    init() {
-        self.id = 0
-        self.name = "MissingNo"
-        self.type = [.normal]
-        self.ability = [.init(name: "", description: "", isHidden: false)]
-        self.height = 123
-        self.weight = 123
-    }
-    
-    func setAbilities() {
-        
+        self.catchRate = catchRate
+        self.eggSteps = eggSteps
+        self.growthRate = growthRate
+        self.baseHappiness = baseHappiness
     }
 }

@@ -7,7 +7,27 @@
 
 import Foundation
 
-enum Gender: String {
+struct GenderResponse: Decodable {
+    let name: Gender
+    let species: [SpeciesDetails]
+    
+    struct SpeciesDetails: Decodable {
+        let species: Species
+        let rate: Int
+        
+        enum CodingKeys: String, CodingKey {
+            case species = "pokemon_species"
+            case rate
+        }
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case name
+        case species = "pokemon_species_details"
+    }
+}
+
+enum Gender: String, CaseIterable, Decodable {
     case male
     case female
     case genderless
@@ -23,3 +43,4 @@ enum Gender: String {
         }
     }
 }
+

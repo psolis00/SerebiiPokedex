@@ -9,11 +9,7 @@ import UIKit
 
 class BasicInfoView: UICollectionView {
     
-    var pokemon: PokemonModel = .init() {
-        didSet {
-            self.reloadData()
-        }
-    }
+    var pokemon: PokemonModel?
     
     private struct Constants {
         static let spacing: CGFloat = 10.0
@@ -44,38 +40,50 @@ class BasicInfoView: UICollectionView {
 extension BasicInfoView: UICollectionViewDataSource {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return self.sectionTitles.count
+        return self.pokemon != nil ? self.sectionTitles.count : 0
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.sectionTitles[section].count
+        return self.pokemon != nil ? self.sectionTitles[section].count : 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DetailCell", for: indexPath) as? DetailCellView else { return UICollectionViewCell() }
         let infoTitle = self.sectionTitles[indexPath.section][indexPath.row]
         cell.setTitle(infoTitle.title)
-
-        if infoTitle == .type {
-            let detailView = PokemonTypeView(frame: .zero)
-            let primaryType: `Type` = self.pokemon.type[0]
-            let secondaryType: `Type`? = self.pokemon.type.count == 2 ? self.pokemon.type[1] : nil
-            detailView.setTypes(primaryType: primaryType, secondaryType: secondaryType)
-            cell.setDetailView(detailView)
-        } else if infoTitle == .genderRatio {
-            let detailView = GenderRatioView(frame: .zero)
-            detailView.setRatio(malePercentage: 80.0, femalePercentage: 20.0)
-            cell.setDetailView(detailView)
-        } else if infoTitle == .abilities {
-            let detailView = AbilitiesView(frame: frame)
-            detailView.setAbilities(abilities: self.pokemon.ability)
-            cell.setDetailView(detailView)
-        } else if infoTitle == .height {
-            cell.setDetailView(text: self.pokemon.height.dmToFeetAndInches())
-        } else if infoTitle == .weight {
-            cell.setDetailView(text: self.pokemon.weight.hgToLbs())
-        } else {
-            cell.setDetailView(text: "test")
+        
+        if let pokemon = self.pokemon {
+            if infoTitle == .type {
+                let detailView = PokemonTypeView(frame: .zero)
+                let primaryType: `Type` = pokemon.type[0]
+                let secondaryType: `Type`? = pokemon.type.count == 2 ? pokemon.type[1] : nil
+                detailView.setTypes(primaryType: primaryType, secondaryType: secondaryType)
+                cell.setDetailView(detailView)
+            } else if infoTitle == .classification {
+                cell.setDetailView(text: pokemon.classification)
+            } else if infoTitle == .genderRatio {
+                let detailView = GenderRatioView(frame: .zero)
+                detailView.setRatio(ratios: pokemon.genderRatios)
+                cell.setDetailView(detailView)
+            } else if infoTitle == .abilities {
+                let detailView = AbilitiesView(frame: frame)
+                detailView.setAbilities(abilities: pokemon.ability)
+                cell.setDetailView(detailView)
+            } else if infoTitle == .height {
+                cell.setDetailView(text: pokemon.height.dmToFeetAndInches())
+            } else if infoTitle == .weight {
+                cell.setDetailView(text: pokemon.weight.hgToLbs())
+            } else if infoTitle == .catchRate {
+                cell.setDetailView(text: String(pokemon.catchRate))
+            } else if infoTitle == .eggSteps {
+                cell.setDetailView(text: String(pokemon.eggSteps))
+            } else if infoTitle == .expGrowth {
+                cell.setDetailView(text: String(pokemon.growthRate.name))
+            } else if infoTitle == .baseHappiness {
+                cell.setDetailView(text: String(pokemon.baseHappiness))
+            } else {
+                cell.setDetailView(text: "test")
+            }
         }
         return cell
     }

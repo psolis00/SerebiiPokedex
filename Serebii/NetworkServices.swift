@@ -11,7 +11,6 @@ public func fetchPokemon<T: Decodable>(fromPath path: String, completion: @escap
     guard let url = URL(string: path) else {
         return
     }
-
     URLSession.shared.dataTask(with: url) { data, response, error in
         if let error = error {
             print(error.localizedDescription)
