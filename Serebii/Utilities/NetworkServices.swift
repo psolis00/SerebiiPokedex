@@ -7,7 +7,7 @@
 
 import Foundation
     
-public func fetchPokemon<T: Decodable>(fromPath path: String, completion: @escaping (T) -> () = { _ in }) {
+public func fetch<T: Decodable>(fromPath path: String, completion: @escaping (T) -> () = { _ in }) {
     guard let url = URL(string: path) else {
         return
     }
@@ -26,5 +26,17 @@ public func fetchPokemon<T: Decodable>(fromPath path: String, completion: @escap
                 print("Unable to decode Pokemon Data: \(error.localizedDescription)")
             }
         }
+    }.resume()
+}
+
+public func fetch(fromPath path: String, completion: @escaping (Data?) -> Void) {
+    guard let url = URL(string: path) else {
+        return
+    }
+    URLSession.shared.dataTask(with: url) { data, response, error in
+        if let error = error {
+            print(error.localizedDescription)
+        }
+        completion(data)
     }.resume()
 }

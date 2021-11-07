@@ -10,25 +10,15 @@ import UIKit
 class PokemonInfoViewController: UIViewController {
 
     var pokemonInfoView: PokemonInfoView!
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-            
-        fetchPokemon(fromPath: "https://pokeapi.co/api/v2/pokemon/bulbasaur") { (pokemon: PokemonResponseModel) in
-            pokemon.pokemonModel { pokemonModel in
-                DispatchQueue.main.async {
-                    self.navigationItem.title = String(format: "#%03d %@", pokemonModel.id, pokemonModel.name)
-                    self.pokemonInfoView = .init(frame: self.view.frame)
-                    self.view.addSubview(self.pokemonInfoView)
-                    self.pokemonInfoView.setPokemon(pokemonModel)
-                }
-            }
-        }
-    }
-    
+    var pokemon: PokemonModel?
+
     override func viewDidLoad() {
         self.navigationController?.navigationBar.prefersLargeTitles = true
         self.navigationController?.navigationBar.backgroundColor = .titleBackgroundColor
+        guard let pokemon = pokemon else { return }
+        self.navigationItem.title = String(format: "#%03d %@", pokemon.id, pokemon.name)
+        self.pokemonInfoView = PokemonInfoView(withPokemon: pokemon, frame: self.view.frame)
+        self.view.addSubview(self.pokemonInfoView)
     }
 
 }

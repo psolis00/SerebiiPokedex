@@ -73,13 +73,34 @@ struct PokemonResponseModel: Decodable {
     }
     
     enum CodingKeys: CodingKey {
-        case id, species, types, abilities, height, weight
+        case id, species, types, abilities, height, weight, sprites
+    }
+    
+    struct SpriteResponse: Decodable {
+        let other: OtherSpriteResponse
+        
+        struct OtherSpriteResponse: Decodable {
+            let officialArtwork: OfficialArtworkResponse
+            
+            enum CodingKeys: String, CodingKey {
+                case officialArtwork = "official-artwork"
+            }
+            
+            struct OfficialArtworkResponse: Decodable {
+                let frontDefault: String
+                
+                enum CodingKeys: String, CodingKey {
+                    case frontDefault = "front_default"
+                }
+            }
+        }
     }
     
     let id: Int
     let species: Species
     let types: [TypeOrderResponse]
     let abilities: [AbilityOrderResponse]
+    let sprites: SpriteResponse
     let height: Double
     let weight: Double
     
@@ -89,16 +110,25 @@ struct PokemonResponseModel: Decodable {
         self.species = try container.decode(Species.self, forKey: .species)
         self.types = try container.decode([TypeOrderResponse].self, forKey: .types)
         self.abilities = try container.decode([AbilityOrderResponse].self, forKey: .abilities)
+        self.sprites = try container.decode(SpriteResponse.self, forKey: .sprites)
         self.height = try container.decode(Double.self, forKey: .height)
         self.weight = try container.decode(Double.self, forKey: .weight)
+    }
+    
+    
+    func fetchImage() {
+        let imagePath = self.sprites.other.officialArtwork.frontDefault
+        fetch(fromPath: imagePath) { (data: Data) in
+            print("success")
+        }
     }
     
     func pokemonModel(completion: @escaping (PokemonModel) -> Void){
         var abilityCount = 0
         var pokemonAbilities: [Ability] = []
         var genderRatios: [(Gender, Int)] = []
-        fetchPokemon(fromPath: self.species.url) { (speciesResponse: SpeciesRepsonse) in
-            fetchPokemon(fromPath: "https://pokeapi.co/api/v2/gender/female") { (genderResponse: GenderResponse) in
+        fetch(fromPath: self.species.url) { (speciesResponse: SpeciesRepsonse) in
+            fetch(fromPath: "https://pokeapi.co/api/v2/gender/female") { (genderResponse: GenderResponse) in
                 if let rate = genderResponse.species.first(where: { $0.species.name == self.species.name })?.rate {
                     genderRatios.append((Gender.female, rate))
                     genderRatios.append((Gender.male, 8 - rate))
@@ -106,12 +136,12 @@ struct PokemonResponseModel: Decodable {
                     genderRatios.append((Gender.genderless, -1))
                 }
                 abilities.forEach { abilityResponse in
-                    fetchPokemon(fromPath: abilityResponse.ability.url) { (ability: AbilityDescriptionResponse) in
+                    fetch(fromPath: abilityResponse.ability.url) { (ability: AbilityDescriptionResponse) in
                         abilityCount += 1
                         guard let description = ability.effectEntries.first(where: { $0.language.name == "en" })?.effect else { return }
-                        pokemonAbilities.append(Ability(name: abilityResponse.ability.name.capitalized, description: description, isHidden: abilityResponse.isHidden))
+                        pokemonAbilities.append(Ability(name: abilityResponse.ability.name.capitalized, description: description, isHidden: abilityResponse.isHidden, slot: abilityResponse.slot))
                         if abilityCount == self.abilities.count {
-                            
+                            pokemonAbilities = pokemonAbilities.sorted(by: { $0.slot < $1.slot })
                             guard let classification = speciesResponse.genera.first(where: { $0.language.name == "en" })?.genus else { return }
                             completion(
                                 PokemonModel(

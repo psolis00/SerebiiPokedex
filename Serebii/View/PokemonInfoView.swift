@@ -12,11 +12,22 @@ class PokemonInfoView: UIView {
     let pokemonImageView: UIImageView
     let basicInfoView: BasicInfoView
     let weaknessChartView: DetailView
+    let pokemon: PokemonModel?
+    
+    init(withPokemon pokemon: PokemonModel, frame: CGRect) {
+        self.pokemonImageView = UIImageView(frame: .zero)
+        self.basicInfoView = BasicInfoView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        self.weaknessChartView = DetailView(frame: .zero)
+        self.pokemon = pokemon
+        super.init(frame: frame)
+        self.setup()
+    }
     
     override init(frame: CGRect) {
         self.pokemonImageView = UIImageView(frame: .zero)
         self.basicInfoView = BasicInfoView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         self.weaknessChartView = DetailView(frame: .zero)
+        self.pokemon = nil
         super.init(frame: frame)
         self.setup()
     }
@@ -62,6 +73,10 @@ class PokemonInfoView: UIView {
         pokemonImageView.backgroundColor = .detailBackgroudColor
         pokemonImageView.layer.cornerRadius = 20.0
         
+        // Set Basic Info View Propertoes
+        self.basicInfoView.pokemon = self.pokemon
+        
+        
         // Set Image View Constraints
         pokemonImageView.translatesAutoresizingMaskIntoConstraints = false
         pokemonImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20).isActive = true
@@ -91,9 +106,5 @@ class PokemonInfoView: UIView {
         weaknessChartView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
         weaknessChartView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
         
-    }
-    
-    func setPokemon(_ pokemon: PokemonModel) {
-        self.basicInfoView.pokemon = pokemon
     }
 }

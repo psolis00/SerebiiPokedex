@@ -36,7 +36,6 @@ class GenderRatioView: UIStackView {
         } else {
             for gender in [Gender.male, Gender.female] {
                 guard let rate = ratios.first(where: { $0.0 == gender })?.1 else { return }
-                print(rate)
                 // Color of symbol
                 let color: UIColor = {
                     switch gender {

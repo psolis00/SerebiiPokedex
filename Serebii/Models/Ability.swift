@@ -11,4 +11,5 @@ struct Ability: Decodable {
     let name: String
     let description: String
     let isHidden: Bool
+    let slot: Int
 }
