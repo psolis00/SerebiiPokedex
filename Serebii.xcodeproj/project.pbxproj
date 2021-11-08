@@ -135,11 +135,11 @@
 		1BD3B4492728955D00DE8D44 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				1BF0ABB82736440E004D58D5 /* PokemonSelectionView.swift */,
 				1BD3B4472728955A00DE8D44 /* DetailView.swift */,
 				1B9A8FCC2729DC3C00260720 /* WeaknessChartView.swift */,
 				1B0FADC6272BA817003B84F7 /* PokemonInfoView.swift */,
 				1B0FADCC272BC9AB003B84F7 /* Basic Info Views */,
-				1BF0ABB82736440E004D58D5 /* PokemonSelectionView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";

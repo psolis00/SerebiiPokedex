@@ -11,6 +11,7 @@ class PokemonInfoViewController: UIViewController {
 
     var pokemonInfoView: PokemonInfoView!
     var pokemon: PokemonModel?
+    var pokemonImage: UIImage?
 
     override func viewDidLoad() {
         self.navigationController?.navigationBar.prefersLargeTitles = true
@@ -18,6 +19,7 @@ class PokemonInfoViewController: UIViewController {
         guard let pokemon = pokemon else { return }
         self.navigationItem.title = String(format: "#%03d %@", pokemon.id, pokemon.name)
         self.pokemonInfoView = PokemonInfoView(withPokemon: pokemon, frame: self.view.frame)
+        self.pokemonInfoView.pokemonImageView.image = self.pokemonImage
         self.view.addSubview(self.pokemonInfoView)
     }
 

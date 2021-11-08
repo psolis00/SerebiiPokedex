@@ -19,9 +19,15 @@ class PokemonSelectionView: UIView {
     var pokemonImageView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "bulbasaurImage")
         imageView.backgroundColor = .detailBackgroudColor
         imageView.layer.cornerRadius = 20
+        return imageView
+    }()
+    
+    var pokeballImageView: UIImageView = {
+        let imageView = UIImageView(frame: .zero)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "pokeballImage")
         return imageView
     }()
     
@@ -47,6 +53,8 @@ class PokemonSelectionView: UIView {
         // Add Subviews
         self.addSubview(self.pokemonImageView)
         self.addSubview(self.pickerView)
+        self.addSubview(self.pokeballImageView)
+        self.backgroundColor = .backgroundColor
 
         self.pokemonImageView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 20).isActive = true
         self.pokemonImageView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerXAnchor).isActive = true
@@ -57,5 +65,10 @@ class PokemonSelectionView: UIView {
         self.pickerView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerXAnchor).isActive = true
         self.pickerView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor).isActive = true
         self.pickerView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        
+        self.pokeballImageView.centerYAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerYAnchor).isActive = true
+        self.pokeballImageView.centerXAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        self.pokeballImageView.heightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.heightAnchor, multiplier: 0.6).isActive = true
+        self.pokeballImageView.widthAnchor.constraint(equalTo: self.pokeballImageView.heightAnchor).isActive = true
     }
 }

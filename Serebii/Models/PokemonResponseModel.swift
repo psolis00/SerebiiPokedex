@@ -128,37 +128,44 @@ struct PokemonResponseModel: Decodable {
         var pokemonAbilities: [Ability] = []
         var genderRatios: [(Gender, Int)] = []
         fetch(fromPath: self.species.url) { (speciesResponse: SpeciesRepsonse) in
-            fetch(fromPath: "https://pokeapi.co/api/v2/gender/female") { (genderResponse: GenderResponse) in
-                if let rate = genderResponse.species.first(where: { $0.species.name == self.species.name })?.rate {
-                    genderRatios.append((Gender.female, rate))
-                    genderRatios.append((Gender.male, 8 - rate))
-                } else {
+            fetch(fromPath: "https://pokeapi.co/api/v2/gender/genderless") { (genderResponse: GenderResponse) in
+                if let _ = genderResponse.species.first(where: { $0.species.name == self.species.name }) {
                     genderRatios.append((Gender.genderless, -1))
-                }
-                abilities.forEach { abilityResponse in
-                    fetch(fromPath: abilityResponse.ability.url) { (ability: AbilityDescriptionResponse) in
-                        abilityCount += 1
-                        guard let description = ability.effectEntries.first(where: { $0.language.name == "en" })?.effect else { return }
-                        pokemonAbilities.append(Ability(name: abilityResponse.ability.name.capitalized, description: description, isHidden: abilityResponse.isHidden, slot: abilityResponse.slot))
-                        if abilityCount == self.abilities.count {
-                            pokemonAbilities = pokemonAbilities.sorted(by: { $0.slot < $1.slot })
-                            guard let classification = speciesResponse.genera.first(where: { $0.language.name == "en" })?.genus else { return }
-                            completion(
-                                PokemonModel(
-                                    id: self.id,
-                                    name: self.species.name.capitalized,
-                                    type: self.types.map({ $0.type.name }),
-                                    classification: classification,
-                                    genderRatios: genderRatios,
-                                    ability: pokemonAbilities,
-                                    height: self.height,
-                                    weight: self.weight,
-                                    catchRate: speciesResponse.captureRate,
-                                    eggSteps: (255 * speciesResponse.hatchCounter) + speciesResponse.hatchCounter,
-                                    growthRate: speciesResponse.growthRate.growth,
-                                    baseHappiness: speciesResponse.baseHappiness
-                                )
-                            )
+                } else {
+                    fetch(fromPath: "https://pokeapi.co/api/v2/gender/female") { (genderResponse: GenderResponse) in
+                        if let rate = genderResponse.species.first(where: { $0.species.name == self.species.name })?.rate {
+                            genderRatios.append((Gender.female, rate))
+                            genderRatios.append((Gender.male, 8 - rate))
+                        } else {
+                            genderRatios.append((Gender.female, 0))
+                            genderRatios.append((Gender.male, 8))
+                        }
+                        abilities.forEach { abilityResponse in
+                            fetch(fromPath: abilityResponse.ability.url) { (ability: AbilityDescriptionResponse) in
+                                abilityCount += 1
+                                guard let description = ability.effectEntries.first(where: { $0.language.name == "en" })?.effect else { return }
+                                pokemonAbilities.append(Ability(name: abilityResponse.ability.name.capitalized, description: description, isHidden: abilityResponse.isHidden, slot: abilityResponse.slot))
+                                if abilityCount == self.abilities.count {
+                                    pokemonAbilities = pokemonAbilities.sorted(by: { $0.slot < $1.slot })
+                                    guard let classification = speciesResponse.genera.first(where: { $0.language.name == "en" })?.genus else { return }
+                                    completion(
+                                        PokemonModel(
+                                            id: self.id,
+                                            name: self.species.name.capitalized,
+                                            type: self.types.map({ $0.type.name }),
+                                            classification: classification,
+                                            genderRatios: genderRatios,
+                                            ability: pokemonAbilities,
+                                            height: self.height,
+                                            weight: self.weight,
+                                            catchRate: speciesResponse.captureRate,
+                                            eggSteps: (255 * speciesResponse.hatchCounter) + speciesResponse.hatchCounter,
+                                            growthRate: speciesResponse.growthRate.growth,
+                                            baseHappiness: speciesResponse.baseHappiness
+                                        )
+                                    )
+                                }
+                            }
                         }
                     }
                 }

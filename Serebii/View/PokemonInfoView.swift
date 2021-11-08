@@ -68,7 +68,6 @@ class PokemonInfoView: UIView {
         contentView.addSubview(weaknessChartView)
         
         // Set Image View Properties
-        pokemonImageView.image = UIImage(named: "bulbasaurImage")
         pokemonImageView.contentMode = .scaleAspectFit
         pokemonImageView.backgroundColor = .detailBackgroudColor
         pokemonImageView.layer.cornerRadius = 20.0
